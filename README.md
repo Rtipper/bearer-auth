@@ -5,7 +5,7 @@
 **Version**: 1.0.0
 
 # Pull Request
-
+- https://github.com/Rtipper/bearer-auth/pull/2
 
 # Heroku Deployment
 - https://rtipper-bearer-auth.herokuapp.com/
