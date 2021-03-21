@@ -2,26 +2,26 @@
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const { JsonWebTokenError } = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-const users = new.mongoose.Schema({
+const SECRET = process.env.APP_SECRET || 'secret';
+
+const users = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
-  password: { type: String, required: true},
-});
+  password: { type: String, required: true }
+}, { toJSON: { virtuals: true } });
 
 // VIRTUAL FIELD TO SCHEMA, MAKES TOKEN READABLE
 users.virtual('token').get(function () {
-  let tokenObject = {
-    username: this.username,
+  let token = {
+    username: this.username
   }
-  return jwt.sign(tokenObject)
+  return jwt.sign(token, SECRET, {expiresIn: '30 days'});
 });
 
 users.pre('save', async function () {
-  if (this.isModified('password')) {
-    this.password = bcrypt.hash(this.password, 10);
-  }
-});
+  this.password = await bcrypt.hash(this.password, 10);
+})
 
 // BASIC AUTH
 users.statics.authenticateBasic = async function (username, password) {
@@ -34,8 +34,8 @@ users.statics.authenticateBasic = async function (username, password) {
 // BEARER AUTH
 users.statics.authenticateWithToken = async function (token) {
   try {
-    const parsedToken = jwt.verify(token, process.env.SECRET);
-    const user = this.findOne({ username: parsedToken.username })
+    const parsedToken = await jwt.verify(token, process.env.SECRET);
+    const user = await this.findOne({ username: parsedToken.username })
     if (user) { return user; }
     throw new Error("User not found");
   } catch (e) {

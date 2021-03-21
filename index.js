@@ -1,13 +1,19 @@
 'use strict';
 
-// START DATABASE SERVER
+require('dotenv').config();
 const mongoose = require('mongoose');
-const options = {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-};
-mongoose.connect(process.env.MONGODB_URI, options);
+const server = require('./src/server.js');
+const PORT = process.env.PORT || 3000
 
-// START WEB SERVER
-require('./src/server.js').start(process.env.PORT);
+// START DATABASE SERVER
+const MONGODB_URI = process.env.MONGODB_URI;
+const options = { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true
+};
+
+mongoose.connect(MONGODB_URI, options)
+  .then(() => {
+    server.start(PORT)
+  })
+  .catch(err => console.error(err.message))
