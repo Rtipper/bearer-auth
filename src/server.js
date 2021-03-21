@@ -1,12 +1,12 @@
 'use strict';
 
-const express = rquire('express');
+const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
-const errorHandlers = require('./error-handlers/500.js');
-const notFound = require('./error-handlers/404.js');
-const authRoutes = rquire('./auth/routes.js');
+const errorHandlers = require('./auth/middleware/error-handlers/500.js');
+const notFound = require('./auth/middleware/error-handlers/404.js');
+const authRoutes = require('./auth/routes.js');
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.use(notFound);
 app.use(errorHandlers);
 
 module.exports = {
-  server: app,
+  app: app,
   startup: (port) => {
     app.listen(port, () => {
       console.log(`Server running on ${port}`);

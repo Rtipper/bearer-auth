@@ -1,11 +1,9 @@
+
 'use strict';
 
-process.env.SECRET = "toes";
-
 require('@code-fellows/supergoose');
-const middleware = require('../../../src/auth/middleware/bearer.js');
-const Users = require('../../../src/auth/models/users.js');
-const jwt = require('jsonwebtoken')
+const basicAuth = require('../src/auth/middleware/basic.js');
+const Users = require('../src/auth/models/users.js');
 
 let users = {
   admin: { username: 'admin', password: 'password' },
@@ -19,6 +17,9 @@ beforeAll(async (done) => {
 
 describe('Auth Middleware', () => {
 
+  // admin:password: YWRtaW46cGFzc3dvcmQ=
+  // admin:foo: YWRtaW46Zm9v
+
   // Mock the express req/res/next that we need for each middleware call
   const req = {};
   const res = {
@@ -29,35 +30,36 @@ describe('Auth Middleware', () => {
 
   describe('user authentication', () => {
 
-    it('fails a login for a user (admin) with an incorrect token', () => {
+    it('fails a login for a user (admin) with the incorrect basic credentials', () => {
 
+      // Change the request to match this test case
       req.headers = {
-        authorization: 'Bearer thisisabadtoken',
+        auth: 'Basic YWRtaW46Zm9v',
       };
 
-      return middleware(req, res, next)
+      // how are we supposed to return something from a middleware?
+      // are we expecting to send a response within the middleware?
+      basicAuth(req, res, next)
         .then(() => {
           expect(next).not.toHaveBeenCalled();
           expect(res.status).toHaveBeenCalledWith(403);
         });
 
-    });
+    }); // it()
 
-    it('logs in a user with a proper token', () => {
+    it('logs in an admin user with the right credentials', () => {
 
-      const user = { username: 'admin' };
-      const token = jwt.sign(user, process.env.SECRET);
-
+      // Change the request to match this test case
       req.headers = {
-        authorization: `Bearer ${token}`,
+        auth: 'Basic YWRtaW46cGFzc3dvcmQ=',
       };
 
-      return middleware(req, res, next)
+      basicAuth(req, res, next)
         .then(() => {
           expect(next).toHaveBeenCalledWith();
         });
 
-    });
+    }); // it()
 
   });
 
