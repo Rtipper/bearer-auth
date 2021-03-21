@@ -32,7 +32,7 @@ GitHub
 Heroku
 
 ## Change Log
-XX-XX-XX XXPM: 
+03-20-21 1045PM: Making more progress on Lab 7 features and tests. Can't fully get all tests running yet. 
 
 ## Credits and Collaborations
 
@@ -47,5 +47,17 @@ Start time: 830PM
 Finish time: PM
 
 Actual time needed to complete:  minutes
+
+------
+
+Number and name of feature: 1-3
+
+Estimate of time needed to complete: 3 hours
+
+Start time: 830PM
+
+Finish time: 1045PM
+
+Actual time needed to complete: TBD - Not Fully Complete
 
 ------
